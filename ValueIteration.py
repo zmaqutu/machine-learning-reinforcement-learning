@@ -53,6 +53,7 @@ class ValueIteration:
 		self.end_state = (2,1)
 		self.rewards = {}
 		self.actions = {}
+		self.values = []
 		self.mines = []
 		self.states = []
 		self.opt_pol = [(0,0), (1, 0), (2, 0), (2, 1)]
@@ -62,7 +63,7 @@ class ValueIteration:
 		for row in range(self.height):
 			for col in range(self.width):
 				self.states.append((row,col))
-		print(self.states)
+		#print(self.states)
 
 	def set_rewards(self):
 		for state in self.states:
@@ -85,13 +86,28 @@ class ValueIteration:
 			"right":(0,1),
 			"down":(-1,0)
 		}
+	def initialize_values(self):
+		for row in range(self.height):
+			row_list = []
+			for col in range(self.width):
+				if (row,col) == self.end_state:
+					row_list.append(100)
+				else:
+					row_list.append(0)
+			self.values.append(row_list)
+
+	def value_iteration(self):
+
 
 	def start_value_iteration(self):
 		print(self.width)
 		self.initialize_states()
 		self.set_rewards()
 		self.generate_actions()
-		print(self.rewards)
+		self.initialize_values()
+		#print(self.rewards)
+		#print(self.values)
+		self.value_iteration()
 		self.animate()
 	print("Youre going to work at google kiddo")
 
