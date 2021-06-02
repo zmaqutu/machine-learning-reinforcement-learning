@@ -52,6 +52,7 @@ class ValueIteration:
 		self.start_state = (0,0)
 		self.end_state = (2,1)
 		self.rewards = {}
+		self.actions = {}
 		self.mines = []
 		self.states = []
 		self.opt_pol = [(0,0), (1, 0), (2, 0), (2, 1)]
@@ -77,10 +78,19 @@ class ValueIteration:
 		plt.show()
 
 
+	def generate_actions(self):
+		self.actions = {
+			"left":(0,-1),
+			"down": (1,0),
+			"right":(0,1),
+			"down":(-1,0)
+		}
+
 	def start_value_iteration(self):
 		print(self.width)
 		self.initialize_states()
 		self.set_rewards()
+		self.generate_actions()
 		print(self.rewards)
 		self.animate()
 	print("Youre going to work at google kiddo")
