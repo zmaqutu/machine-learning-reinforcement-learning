@@ -22,29 +22,36 @@ class ValueIteration:
 		self.records = [
 		[
 			[0, 0,  0 ],
+			[0, 0, 100],
 			[0, 0, 100]
+
 		],
 		[
 			[0,   0,  80],
-			[0,  80, 100]
+			[0,  80, 100],
+			[0, 0, 100]
 		],
 		[
 			[ 0, 64,  80],
-			[64, 80, 100]
+			[64, 80, 100],
+			[0, 0, 100]
 		],
 		[
 			[51.2, 64,  80],
-			[  64, 80, 100]
+			[  64, 80, 100],
+			[0, 0, 100]
 		],
 		[
 			[51.2, 64,  80],
-			[  64, 80, 100]
+			[  64, 80, 100],
+			[0, 0, 100]
 		]
 	]
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
 		self.start_state = (0,0)
 		self.end_state = (2,1)
+		self.rewards = {}
 		self.mines = []
 		self.states = []
 		self.opt_pol = [(0,0), (1, 0), (2, 0), (2, 1)]
@@ -56,16 +63,26 @@ class ValueIteration:
 				self.states.append((row,col))
 		print(self.states)
 
+	def set_rewards(self):
+		for state in self.states:
+			if state == self.end_state:
+				self.rewards[state] = 100
+			else:
+				self.rewards[state] = 0
+
 	def animate(self):
 		anim, fig, ax = generateAnimat(self.records, self.start_state, self.end_state, mines=self.mines, opt_pol=self.opt_pol,
 									   start_val=-10, end_val=100, mine_val=150, just_vals=False, generate_gif=False,
 									   vmin=-10, vmax=150)
+		plt.show()
+
 
 	def start_value_iteration(self):
 		print(self.width)
 		self.initialize_states()
+		self.set_rewards()
+		print(self.rewards)
 		self.animate()
-		plt.show()
 	print("Youre going to work at google kiddo")
 
 class driverClass:
