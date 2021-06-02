@@ -5,6 +5,8 @@
 
 # Import packages
 import matplotlib.pyplot as plt
+#from matplotlib import pyplot as plt
+
 
 from Animate import generateAnimat
 

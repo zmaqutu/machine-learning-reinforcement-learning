@@ -1,1 +1,4 @@
 *.pdf
+*.zip
+/__pycache__
+/venv
