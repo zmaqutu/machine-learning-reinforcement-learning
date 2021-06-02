@@ -84,7 +84,7 @@ class ValueIteration:
 			"left":(0,-1),
 			"down": (1,0),
 			"right":(0,1),
-			"down":(-1,0)
+			"up":(-1,0)
 		}
 	def initialize_values(self):
 		for row in range(self.height):
@@ -96,8 +96,24 @@ class ValueIteration:
 					row_list.append(0)
 			self.values.append(row_list)
 
-	def value_iteration(self):
+	def is_valid_state(self,next_state):
+		if next_state[0] < 0 or next_state[0] >= self.height or next_state[1] < 0 or next_state[1] >= self.width:
+			return False
+		return True
 
+	def value_iteration(self):
+		while True:
+			for state in self.states:
+				for action in self.actions:
+					next_state = (self.actions[action][0]+state[0],self.actions[action][1]+state[1])
+					if self.is_valid_state(next_state):
+						print(str(next_state) + " is a valid state")
+					# calculate value at that state
+					else:
+						print(str(next_state) + " is not a state")
+					#	continue
+
+			return
 
 	def start_value_iteration(self):
 		print(self.width)
@@ -112,7 +128,7 @@ class ValueIteration:
 	print("Youre going to work at google kiddo")
 
 class driverClass:
-	def main():
+	def main ():
 		valueIt = ValueIteration()
 		valueIt.start_value_iteration()
 	if __name__ == "__main__":
