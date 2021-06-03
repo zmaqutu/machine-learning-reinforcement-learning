@@ -17,40 +17,13 @@ class ValueIteration:
 
 		self.k = sys.argv[10]
 
-		self.gamma = sys.argv[12]
+		self.gamma = float(sys.argv[12])
 
-		self.records = [
-		[
-			[0, 0,  0 ],
-			[0, 0, 100],
-			[0, 0, 100]
-
-		],
-		[
-			[0,   0,  80],
-			[0,  80, 100],
-			[0, 0, 100]
-		],
-		[
-			[ 0, 64,  80],
-			[64, 80, 100],
-			[0, 0, 100]
-		],
-		[
-			[51.2, 64,  80],
-			[  64, 80, 100],
-			[0, 0, 100]
-		],
-		[
-			[51.2, 64,  80],
-			[  64, 80, 100],
-			[0, 0, 100]
-		]
-	]
+		self.records = []
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
-		self.start_state = (0,0)
-		self.end_state = (2,1)
+		self.start_state = (0,9)
+		self.end_state = (9,0)
 		self.rewards = {}
 		self.actions = {}
 		self.values = []
@@ -62,7 +35,7 @@ class ValueIteration:
 	def initialize_states(self):
 		for row in range(self.height):
 			for col in range(self.width):
-				self.states.append((row,col))
+				self.states.append((col,row))
 		#print(self.states)
 
 	def set_rewards(self):
@@ -81,39 +54,76 @@ class ValueIteration:
 
 	def generate_actions(self):
 		self.actions = {
-			"left":(0,-1),
-			"down": (1,0),
-			"right":(0,1),
-			"up":(-1,0)
+			"left":(-1,0),
+			"down": (0,1),
+			"right":(1,0),
+			"up":(0,-1)
 		}
 	def initialize_values(self):
 		for row in range(self.height):
 			row_list = []
 			for col in range(self.width):
-				if (row,col) == self.end_state:
+				if (col,row) == self.end_state:
 					row_list.append(100)
 				else:
 					row_list.append(0)
 			self.values.append(row_list)
 
 	def is_valid_state(self,next_state):
-		if next_state[0] < 0 or next_state[0] >= self.height or next_state[1] < 0 or next_state[1] >= self.width:
+		if next_state[0] < 0 or next_state[0] >= self.width or next_state[1] < 0 or next_state[1] >= self.height:
 			return False
 		return True
 
+	def calculate_value(self, state, next_state):
+		value = self.rewards[state] + (self.gamma * (self.values[next_state[1]][next_state[0]]) )
+		return value
+
+	def find_optimal_policy(self):
+		self.opt_pol.append(self.start_state)
+		policy_candidates = {}
+		current_state = self.start_state
+		while True:
+			for action in self.actions:
+				next_state = (self.actions[action][0] + current_state[0],
+							  self.actions[action][1] + current_state[1])
+				if self.is_valid_state(next_state):
+					policy_candidates[next_state] = self.values[next_state[1]][next_state[0]]
+			current_state = max(policy_candidates,key=policy_candidates.get)
+			self.opt_pol.append(current_state)
+			policy_candidates.clear()
+			#if current_state == self.end_state:
+				#return
+			break
+
+		print(self.opt_pol)
+
+
 	def value_iteration(self):
+		temp_values = self.values
+		iterations = 0
 		while True:
 			for state in self.states:
+				adjacent_values = []
 				for action in self.actions:
 					next_state = (self.actions[action][0]+state[0],self.actions[action][1]+state[1])
 					if self.is_valid_state(next_state):
-						print(str(next_state) + " is a valid state")
+						#print(str(next_state) + " is a valid state")
+						value = self.calculate_value(state,next_state)
+						adjacent_values.append(value)
 					# calculate value at that state
 					else:
-						print(str(next_state) + " is not a state")
-					#	continue
+						#print(str(next_state) + " is not a state")
+						continue
+				temp_values[state[1]][state[0]] = round(max(adjacent_values),2)
+			self.values = temp_values
+			self.records.append(self.values)
+			print(self.values)
+			iterations += 1
+			if iterations == 2:
+				self.find_optimal_policy()
+				return
 
-			return
+
 
 	def start_value_iteration(self):
 		print(self.width)
