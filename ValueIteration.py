@@ -1,5 +1,6 @@
 import sys
 import matplotlib.pyplot as plt
+import random
 from Animate import generateAnimat
 
 
@@ -22,14 +23,14 @@ class ValueIteration:
 		self.records = []
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
-		self.start_state = (0,9)
-		self.end_state = (9,0)
+		self.start_state = (0,0)
+		self.end_state = (2,1)
 		self.rewards = {}
 		self.actions = {}
 		self.values = []
 		self.mines = []
 		self.states = []
-		self.opt_pol = [(0,0), (1, 0), (2, 0), (2, 1)]
+		self.opt_pol = []
 
 
 	def initialize_states(self):
@@ -68,6 +69,7 @@ class ValueIteration:
 				else:
 					row_list.append(0)
 			self.values.append(row_list)
+		self.records.append(self.values)
 
 	def is_valid_state(self,next_state):
 		if next_state[0] < 0 or next_state[0] >= self.width or next_state[1] < 0 or next_state[1] >= self.height:
@@ -76,25 +78,42 @@ class ValueIteration:
 
 	def calculate_value(self, state, next_state):
 		value = self.rewards[state] + (self.gamma * (self.values[next_state[1]][next_state[0]]) )
+		print(str(state) +" has a rvalue of" + str(self.values[state[1]][state[0]]))
 		return value
 
 	def find_optimal_policy(self):
-		self.opt_pol.append(self.start_state)
+		policy_set = set()
+		policy_set.add(self.start_state)
 		policy_candidates = {}
 		current_state = self.start_state
+		i = 0
 		while True:
 			for action in self.actions:
 				next_state = (self.actions[action][0] + current_state[0],
 							  self.actions[action][1] + current_state[1])
 				if self.is_valid_state(next_state):
 					policy_candidates[next_state] = self.values[next_state[1]][next_state[0]]
+			#currently equals to the first key with maximum value
 			current_state = max(policy_candidates,key=policy_candidates.get)
-			self.opt_pol.append(current_state)
-			policy_candidates.clear()
-			#if current_state == self.end_state:
-				#return
-			break
+			max_value = policy_candidates[current_state]
+			list_of_max = []
+			for candidate in policy_candidates:
+				if policy_candidates[candidate] == max_value:
+					list_of_max.append(candidate)
 
+			random_index = random.randint(0,len(list_of_max)-1)
+			#round(random_index)
+			current_state = list_of_max[random_index]
+
+			policy_set.add(current_state)
+			policy_candidates.clear()
+			if current_state == self.end_state:
+				break
+			#i += 1
+			#if i == 100:
+			#	break
+		for state in policy_set:
+			self.opt_pol.append(state)
 		print(self.opt_pol)
 
 
@@ -104,6 +123,8 @@ class ValueIteration:
 		while True:
 			for state in self.states:
 				adjacent_values = []
+				if state == self.end_state:
+					continue
 				for action in self.actions:
 					next_state = (self.actions[action][0]+state[0],self.actions[action][1]+state[1])
 					if self.is_valid_state(next_state):
@@ -119,9 +140,11 @@ class ValueIteration:
 			self.records.append(self.values)
 			print(self.values)
 			iterations += 1
-			if iterations == 2:
-				self.find_optimal_policy()
-				return
+			if iterations == 3:
+				break
+
+		print("This runs once")
+		self.find_optimal_policy()
 
 
 
