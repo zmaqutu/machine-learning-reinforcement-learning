@@ -4,7 +4,7 @@ import random
 from Animate import generateAnimat
 
 
-class ValueIteration: 
+class QLearning:
 
 	def __init__(self):
 		self.width =  int(sys.argv[1])
@@ -19,15 +19,16 @@ class ValueIteration:
 		self.k = sys.argv[10]
 
 		self.gamma = float(sys.argv[12])
+		self.epochs = float(sys.argv[14])
 
 		self.records = set()
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
 		self.start_state = (0,0)
 		self.end_state = (2,1)
+		self.q_table = []
 		self.rewards = {}
 		self.actions = {}
-		self.values = []
 		self.mines = []
 		self.states = []
 		self.opt_pol = []
@@ -44,7 +45,7 @@ class ValueIteration:
 			if state == self.end_state:
 				self.rewards[state] = 100
 			else:
-				self.rewards[state] = 0
+				self.rewards[state] = -1
 
 	def animate(self):
 		anim, fig, ax = generateAnimat(self.records, self.start_state, self.end_state, mines=self.mines, opt_pol=self.opt_pol,
@@ -60,15 +61,12 @@ class ValueIteration:
 			"right":(1,0),
 			"up":(0,-1)
 		}
-	def initialize_values(self):
+	def initialize_q_table(self):
 		for row in range(self.height):
 			row_list = []
 			for col in range(self.width):
-				if (col,row) == self.end_state:
-					row_list.append(100)
-				else:
-					row_list.append(0)
-			self.values.append(row_list)
+				row_list.append(0)
+			self.q_table.append(row_list)
 
 	def is_valid_state(self,next_state):
 		if next_state[0] < 0 or next_state[0] >= self.width or next_state[1] < 0 or next_state[1] >= self.height:
@@ -117,10 +115,12 @@ class ValueIteration:
 		print(self.opt_pol)
 
 
-	def value_iteration(self):
+	def q_learn(self):
 		temp_values = self.values.copy()
-		iterations = 0
-		while True:
+		for iterations in range(self.epochs):
+			current_state = self.states[random.randint(len(self.states))]
+			print(current_state)
+			return
 			for state in self.states:
 				adjacent_values = []
 				if state == self.end_state:
@@ -138,35 +138,27 @@ class ValueIteration:
 				temp_values[state[1]][state[0]] = round(max(adjacent_values),2)
 			self.values = temp_values.copy()
 			print(temp_values)
-			print("now adding to records")
 			self.records.append(self.values.copy())
-			print("here is the record after appending")
-			print(self.records)
-			if iterations == 5:
-				break
-			iterations += 1
 
 		print("This runs once")
 		self.find_optimal_policy()
 
 
 
-	def start_value_iteration(self):
+	def start_q_learning(self):
 		#print(self.width)
+		self.initialize_q_table()
 		self.initialize_states()
 		self.set_rewards()
+		print(self.q_table)
 		self.generate_actions()
-		self.initialize_values()
-		#print(self.rewards)
-		#print(self.values)
-		self.value_iteration()
-		#print(self.records)
-		self.animate()
+		self.q_learn()
+		#self.animate()
 		print("Youre going to work at google kiddo")
 
 class driverClass:
 	def main ():
-		valueIt = ValueIteration()
-		valueIt.start_value_iteration()
+		q = QLearning()
+		q.start_q_learning()
 	if __name__ == "__main__":
 		main()
