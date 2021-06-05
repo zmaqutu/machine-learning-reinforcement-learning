@@ -21,13 +21,15 @@ class QLearning:
 
 		self.gamma = float(sys.argv[12])
 		self.epochs = int(sys.argv[14])
-		self.learning_rate = 0.2
+		self.learning_rate = 0.6
+		self.alpha = 0.1
+
 
 		self.records = []
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
-		self.start_state = (0,0)
-		self.end_state = (9,9)
+		self.start_state = (int(sys.argv[4]),int(sys.argv[5]))
+		self.end_state = (int(sys.argv[7]),int(sys.argv[8]))
 		self.q_table = []
 		self.rewards = {}
 		self.actions = {}
@@ -93,7 +95,7 @@ class QLearning:
 			return False
 		return True
 
-	def choose_action(self, current_state, e_greedy = 0.8):
+	def choose_action(self, current_state, e_greedy = 0.6):
 		taking_random_action = np.random.choice([True,False], p=[e_greedy, 1 - e_greedy])
 		actions = ["left","down","right","up"]
 
@@ -170,8 +172,18 @@ class QLearning:
 	def q_learn(self):
 		#temp_values = self.values.copy()
 		for iterations in range(self.epochs):
+			if iterations > 0.55*self.epochs:
+				#while True:
+				#	random_x = random.randint(-3,3)
+				#	random_y = random.randint(-3,3)
+				#	if self.is_valid_state((random_x + self.start_state[0], random_y + self.start_state[1])):
+				#		current_state = (random_x + self.start_state[0], random_y + self.start_state[1])
+				#		print("Constrained state is " + str(current_state))
+				#		break
+				current_state = self.start_state
+			else:
+				current_state = self.states[random.randint(0,len(self.states)-1)]
 
-			current_state = self.states[random.randint(0,len(self.states)-1)]
 			while current_state != self.end_state:
 				action = self.choose_action(current_state)
 				action_dx = self.actions[action][0]
@@ -181,23 +193,26 @@ class QLearning:
 				#print("action performed: " + str(action))
 				#print("Next State: " + str(next_state))
 				current_q_value = self.q_table[current_state[1]][current_state[0]]
-				maximum_action = self.choose_action(current_state,e_greedy=0)
+				maximum_action = self.choose_action(current_state,e_greedy=0.25)
 				action_dx = self.actions[maximum_action][0]
 				action_dy = self.actions[maximum_action][1]
 				max_state = (action_dx + current_state[0], action_dy + current_state[1])
 				max_q_value = self.q_table[max_state[1]][max_state[0]]
 				#TODO add a decaying learning rate
 				temporal_difference = (self.rewards[next_state] + (self.gamma * ( max_q_value - current_q_value)))
-				self.learning_rate = 1 / (1 + self.visits[current_state])
-				q_value = current_q_value + (self.learning_rate * temporal_difference)
+				self.learning_rate = self.alpha / (1 + self.visits[current_state])
+				print(self.learning_rate)
+				q_value = current_q_value + (0.15* temporal_difference)
 				self.q_table[current_state[1]][current_state[0]] = round(q_value,2)
-				print(self.q_table)
+				#print(self.q_table)
 				self.visits[current_state]+=1
+				#epsilon = epsilon * (1 - (1/(iterations+1)))
 				current_state = next_state
 			self.records.append(self.get_record())
+		print(self.visits)
 
 		self.find_optimal_policy()
-		print(self.records)
+		#print(self.records)
 
 
 
@@ -216,6 +231,12 @@ class QLearning:
 
 class driverClass:
 	def main ():
+		if sys.argv[3] != "-start" or sys.argv[6] != "-end" or sys.argv[9] != "-k" or sys.argv[11] != "-gamma" or sys.argv[13] != "-epochs":
+			print("===============================================")
+			print("Invalid arguments")
+			print("use QLearning.py [-start startx starty] [-end endx endy] [-k numberofMines] [-gamma gamma]")
+			print("                 [-epochs epochs] [-learningRate learningRate]")
+			return
 		q = QLearning()
 		q.start_q_learning()
 	if __name__ == "__main__":

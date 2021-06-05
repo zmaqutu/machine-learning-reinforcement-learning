@@ -24,8 +24,8 @@ class ValueIteration:
 		self.records = []
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
-		self.start_state = (0,0)
-		self.end_state = (9,9)
+		self.start_state = (int(sys.argv[4]),int(sys.argv[5]))
+		self.end_state = (int(sys.argv[7]),int(sys.argv[8]))
 		self.rewards = {}
 		self.actions = {}
 		self.values = []
@@ -84,7 +84,6 @@ class ValueIteration:
 				if (col,row) == self.end_state:
 					row_list.append(100)
 				if (col,row) in self.mines:
-					print("miiiiiiiiiiiiiinnnnnnnnnnnnneeeeeeeeee")
 					row_list.append(-100)
 				else:
 					row_list.append(0)
@@ -202,6 +201,12 @@ class ValueIteration:
 
 class driverClass:
 	def main ():
+		if sys.argv[3] != "-start" or sys.argv[6] != "-end" or sys.argv[9] != "-k" or sys.argv[11] != "-gamma":
+			print("===============================================")
+			print("Invalid arguments")
+			print("use QLearning.py [-start startx starty] [-end endx endy] [-k numberofMines] [-gamma gamma]")
+			print("                 [-epochs epochs] [-learningRate learningRate]")
+			return
 		valueIt = ValueIteration()
 		valueIt.start_value_iteration()
 	if __name__ == "__main__":
