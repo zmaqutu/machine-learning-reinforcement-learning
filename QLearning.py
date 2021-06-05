@@ -85,11 +85,11 @@ class QLearning:
 			policy_candidates = {}
 			for action in self.actions:
 				next_state = (self.actions[action][0]+current_state[0],self.actions[action][1]+current_state[1])
-				if is_valid_state(next_state):
+				if self.is_valid_state(next_state):
 					policy_candidates[next_state] = self.q_table[next_state[1]][next_state[0]]
 
 			max_state = max(policy_candidates, key=policy_candidates.get)
-			max_q_value = policy_candidates[current_action]
+			max_q_value = policy_candidates[max_state]
 			list_of_max = []
 			for candidate in policy_candidates:
 				if policy_candidates[candidate] == max_q_value:
