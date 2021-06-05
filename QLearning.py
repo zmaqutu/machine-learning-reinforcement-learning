@@ -17,7 +17,7 @@ class QLearning:
 		self.end_x = sys.argv[7]
 		self.end_y = sys.argv[8]
 
-		self.k = sys.argv[10]
+		self.k = int(sys.argv[10])
 
 		self.gamma = float(sys.argv[12])
 		self.epochs = int(sys.argv[14])
@@ -47,7 +47,9 @@ class QLearning:
 		for state in self.states:
 			if state == self.end_state:
 				self.rewards[state] = 100
-			else:
+			if state in self.mines:
+				self.rewards[state] = -100
+			if state != self.end_state and state not in self.mines:
 				self.rewards[state] = 0
 
 	def initialize_visits(self):
@@ -68,6 +70,17 @@ class QLearning:
 			"right":(1,0),
 			"up":(0,-1)
 		}
+	def initialize_mines(self):
+		for i in range(self.k):
+			mine_state = self.states[np.random.choice(range(len(self.states)))]
+			print(mine_state)
+			if mine_state == self.end_state or mine_state == self.start_state:
+				print("Couldn't generate mine due to state assignment clash")
+				i-=1
+				continue
+			else:
+				self.mines.append(mine_state)
+
 	def initialize_q_table(self):
 		for row in range(self.height):
 			row_list = []
@@ -81,10 +94,10 @@ class QLearning:
 		return True
 
 	def choose_action(self, current_state, e_greedy = 0.8):
-		using_random_action = np.random.choice([True,False], p=[e_greedy, 1 - e_greedy])
+		taking_random_action = np.random.choice([True,False], p=[e_greedy, 1 - e_greedy])
 		actions = ["left","down","right","up"]
 
-		if using_random_action:
+		if taking_random_action:
 			print("We are using a random valid action")
 			while True:
 				random_index = random.randint(0,len(actions) - 1)
@@ -192,6 +205,7 @@ class QLearning:
 		#print(self.width)
 		self.initialize_q_table()
 		self.initialize_states()
+		self.initialize_mines()
 		self.set_rewards()
 		print(self.q_table)
 		self.initialize_visits()
