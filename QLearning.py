@@ -126,41 +126,20 @@ class QLearning:
 		return value
 
 	def find_optimal_policy(self):
+		current_state = self.start_state
 		policy_set = set()
 		policy_set.add(self.start_state)
-		policy_candidates = {}
-		current_state = self.start_state
-		i = 0
-		while True:
-			for action in self.actions:
-				next_state = (self.actions[action][0] + current_state[0],
-							  self.actions[action][1] + current_state[1])
-				if self.is_valid_state(next_state):
-					policy_candidates[next_state] = self.values[next_state[1]][next_state[0]]
-			#currently equals to the first key with maximum value
-			current_state = max(policy_candidates,key=policy_candidates.get)
-			max_value = policy_candidates[current_state]
-			list_of_max = []
-			for candidate in policy_candidates:
-				if policy_candidates[candidate] == max_value:
-					list_of_max.append(candidate)
+		while current_state != self.end_state:
+			max_action = self.choose_action(current_state,epsilon=0.1)
+			action_dx = self.actions[max_action][0]
+			action_dy = self.actions[max_action][1]
+			next_state = (action_dx + current_state[0],action_dy + current_state[1])
+			policy_set.add(next_state)
+			current_state = next_state
 
-			random_index = random.randint(0,len(list_of_max)-1)
-			#round(random_index)
-			current_state = list_of_max[random_index]
-
-			policy_set.add(current_state)
-			policy_candidates.clear()
-			if current_state == self.end_state:
-				break
-			#i += 1
-			#if i == 100:
-			#	break
 		for state in policy_set:
-			if self.opt_pol.count(state) < 1:
-				self.opt_pol.append(state)
+			self.opt_pol.append(state)
 		print(self.opt_pol)
-
 
 	def q_learn(self):
 		#temp_values = self.values.copy()
@@ -187,9 +166,7 @@ class QLearning:
 				print(self.q_table)
 				current_state = next_state
 
-		print("This runs once")
-		print(self.rewards)
-		#self.find_optimal_policy()
+		self.find_optimal_policy()
 
 
 
