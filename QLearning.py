@@ -26,7 +26,7 @@ class QLearning:
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
 		self.start_state = (0,0)
-		self.end_state = (2,1)
+		self.end_state = (4,4)
 		self.q_table = []
 		self.rewards = {}
 		self.actions = {}
@@ -46,7 +46,7 @@ class QLearning:
 			if state == self.end_state:
 				self.rewards[state] = 100
 			else:
-				self.rewards[state] = -1
+				self.rewards[state] = 0
 
 	def animate(self):
 		anim, fig, ax = generateAnimat(self.records, self.start_state, self.end_state, mines=self.mines, opt_pol=self.opt_pol,
@@ -172,21 +172,23 @@ class QLearning:
 				action_dx = self.actions[action][0]
 				action_dy = self.actions[action][1]
 				next_state = (action_dx + current_state[0], action_dy + current_state[1])
-				#print("Current State" + str(current_state))
-				#print("action performed: " + str(action))
-				#print("Next State: " + str(next_state))
+				print("Current State" + str(current_state))
+				print("action performed: " + str(action))
+				print("Next State: " + str(next_state))
 				current_q_value = self.q_table[current_state[1]][current_state[0]]
 				maximum_action = self.choose_action(current_state,epsilon=0)
 				action_dx = self.actions[maximum_action][0]
 				action_dy = self.actions[maximum_action][1]
 				max_state = (action_dx + current_state[0], action_dy + current_state[1])
-				max_q_value = self.q_table[max_state[1], max_state[0]]
+				max_q_value = self.q_table[max_state[1]][max_state[0]]
 				#TODO add a decaying learning rate
-				q_value = self.rewards(current_state) + gamma * ( max_q_value - current_q_value)
-				self.q_table[current_state[1]][current_state[0]] = q_value
+				q_value = self.rewards[next_state] + (self.gamma * ( max_q_value - current_q_value))
+				self.q_table[current_state[1]][current_state[0]] = round(q_value,2)
+				print(self.q_table)
 				current_state = next_state
 
 		print("This runs once")
+		print(self.rewards)
 		#self.find_optimal_policy()
 
 
