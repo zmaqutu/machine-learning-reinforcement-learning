@@ -44,7 +44,10 @@ class ValueIteration:
 		for state in self.states:
 			if state == self.end_state:
 				self.rewards[state] = 100
-			else:
+			if state in self.mines:
+				print("reward for goin here is zero")
+				self.rewards[state] = -100
+			if state != self.end_state and state not in self.mines:
 				self.rewards[state] = 0
 
 	def animate(self):
@@ -157,7 +160,7 @@ class ValueIteration:
 		while True:
 			for state in self.states:
 				adjacent_values = []
-				if state == self.end_state:
+				if state == self.end_state or state in self.mines:
 					continue
 				for action in self.actions:
 					next_state = (self.actions[action][0]+state[0],self.actions[action][1]+state[1])
@@ -185,10 +188,10 @@ class ValueIteration:
 	def start_value_iteration(self):
 		#print(self.width)
 		self.initialize_states()
-		self.set_rewards()
 		self.generate_actions()
 		self.initialize_mines()
 		self.initialize_values()
+		self.set_rewards()
 		#print(self.rewards)
 		#print(self.values)
 		self.initialize_records()
