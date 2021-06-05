@@ -24,7 +24,7 @@ class ValueIteration:
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
 		self.start_state = (0,0)
-		self.end_state = (2,1)
+		self.end_state = (4,4)
 		self.rewards = {}
 		self.actions = {}
 		self.values = []
@@ -69,6 +69,17 @@ class ValueIteration:
 				else:
 					row_list.append(0)
 			self.values.append(row_list)
+
+	def initialize_records(self):
+		record = [[0 for x in range(self.width)] for y in range(self.height)]
+		for state in self.states:
+			if state == self.end_state:
+				record[state[1]][state[0]] = 100
+			else:
+				record[state[1]][state[0]] = 0
+		print("THe THECord is ")
+		print(record)
+		self.records.append(record)
 
 	def is_valid_state(self,next_state):
 		if next_state[0] < 0 or next_state[0] >= self.width or next_state[1] < 0 or next_state[1] >= self.height:
@@ -116,6 +127,11 @@ class ValueIteration:
 		print(self.opt_pol)
 
 
+	def get_record(self):
+		record = [[0 for x in range(self.width)] for y in range(self.height)]
+		for state in self.states:
+			record[state[1]][state[0]] = self.values[state[1]][state[0]]
+		return record
 	def value_iteration(self):
 		temp_values = self.values.copy()
 		iterations = 0
@@ -136,10 +152,7 @@ class ValueIteration:
 						continue
 				temp_values[state[1]][state[0]] = round(max(adjacent_values),2)
 			self.values = temp_values.copy()
-			print(temp_values)
-			print("now adding to records")
-			self.records.append(temp_values.copy())
-			print("here is the record after appending")
+			self.records.append(self.get_record())
 			print(self.records)
 			if iterations == 5:
 				break
@@ -158,6 +171,7 @@ class ValueIteration:
 		self.initialize_values()
 		#print(self.rewards)
 		#print(self.values)
+		self.initialize_records()
 		self.value_iteration()
 		#print(self.records)
 		self.animate()

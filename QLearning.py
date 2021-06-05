@@ -22,7 +22,7 @@ class QLearning:
 		self.gamma = float(sys.argv[12])
 		self.epochs = int(sys.argv[14])
 
-		self.records = set()
+		self.records = []
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
 		self.start_state = (0,0)
@@ -141,6 +141,16 @@ class QLearning:
 			self.opt_pol.append(state)
 		print(self.opt_pol)
 
+	def get_record(self):
+		record = [[0 for x in range(self.width)] for y in range(self.height)]
+		for state in self.states:
+			if state == self.end_state:
+				continue
+			else:
+				record[state[1]][state[0]] = self.q_table[state[1]][state[0]]
+		return record
+
+
 	def q_learn(self):
 		#temp_values = self.values.copy()
 		for iterations in range(self.epochs):
@@ -165,8 +175,10 @@ class QLearning:
 				self.q_table[current_state[1]][current_state[0]] = round(q_value,2)
 				print(self.q_table)
 				current_state = next_state
+				self.records.append(self.get_record())
 
 		self.find_optimal_policy()
+		print(self.records)
 
 
 
@@ -178,7 +190,7 @@ class QLearning:
 		print(self.q_table)
 		self.generate_actions()
 		self.q_learn()
-		#self.animate()
+		self.animate()
 		print("Youre going to work at google kiddo")
 
 class driverClass:
