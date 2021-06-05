@@ -1,5 +1,6 @@
 import sys
 import matplotlib.pyplot as plt
+import numpy as np
 import random
 from Animate import generateAnimat
 
@@ -16,7 +17,7 @@ class ValueIteration:
 		self.end_x = sys.argv[7]
 		self.end_y = sys.argv[8]
 
-		self.k = sys.argv[10]
+		self.k = int(sys.argv[10])
 
 		self.gamma = float(sys.argv[12])
 
@@ -60,12 +61,28 @@ class ValueIteration:
 			"right":(1,0),
 			"up":(0,-1)
 		}
+	def initialize_mines(self):
+		for i in range(self.k):
+			mine_state = self.states[np.random.choice(range(len(self.states)))]
+			print(mine_state)
+			if mine_state == self.end_state or mine_state == self.start_state:
+				print("Couldn't generate mine due to state assignment clash")
+				i-=1
+				continue
+			else:
+				self.mines.append(mine_state)
+		print("Mines")
+		print(self.mines)
+
 	def initialize_values(self):
 		for row in range(self.height):
 			row_list = []
 			for col in range(self.width):
 				if (col,row) == self.end_state:
 					row_list.append(100)
+				if (col,row) in self.mines:
+					print("miiiiiiiiiiiiiinnnnnnnnnnnnneeeeeeeeee")
+					row_list.append(-100)
 				else:
 					row_list.append(0)
 			self.values.append(row_list)
@@ -75,7 +92,9 @@ class ValueIteration:
 		for state in self.states:
 			if state == self.end_state:
 				record[state[1]][state[0]] = 100
-			else:
+			if state in self.mines:
+				record[state[1]][state[0]] = -100
+			if state != self.end_state and state not in self.mines:
 				record[state[1]][state[0]] = 0
 		print("THe THECord is ")
 		print(record)
@@ -116,7 +135,7 @@ class ValueIteration:
 
 			policy_set.add(current_state)
 			policy_candidates.clear()
-			if current_state == self.end_state:
+			if current_state == self.end_state or current_state in self.mines:
 				break
 			#i += 1
 			#if i == 100:
@@ -168,6 +187,7 @@ class ValueIteration:
 		self.initialize_states()
 		self.set_rewards()
 		self.generate_actions()
+		self.initialize_mines()
 		self.initialize_values()
 		#print(self.rewards)
 		#print(self.values)
