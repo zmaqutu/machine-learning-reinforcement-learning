@@ -74,10 +74,9 @@ class QLearning:
 			return False
 		return True
 
-	def choose_action(self, current_state, epsilon = 0.9):
+	def choose_action(self, current_state, epsilon = 0.5):
 		using_random_action = np.random.choice([True,False], p=[epsilon, 1 - epsilon])
 		actions = ["left","down","right","up"]
-		print(using_random_action)
 
 		if using_random_action:
 			print("We are using a random valid action")
@@ -86,8 +85,8 @@ class QLearning:
 				selected_action = actions[random_index]
 				action_change = self.actions[selected_action]
 				if self.is_valid_state((action_change[0] + current_state[0],action_change[1] + current_state[1])):
-					print("Start position is " + str(current_state))
-					print(selected_action)
+					#print("Start position is " + str(current_state))
+					#print(selected_action)
 					return selected_action
 		else:
 			print("We are using a greedy action")
@@ -110,10 +109,10 @@ class QLearning:
 			action_dx = max_state[0] - current_state[0]
 			action_dy = max_state[1] - current_state[1]
 
-			print(str((action_dx,action_dy)) )
+			#print(str((action_dx,action_dy)) )
 			for action in self.actions:
 				if self.actions[action] == (action_dx,action_dy):
-					print(action)
+					#print(action)
 					return action
 
 
@@ -168,13 +167,25 @@ class QLearning:
 		for iterations in range(self.epochs):
 
 			current_state = self.states[random.randint(0,len(self.states)-1)]
-			print("current statring state")
-			print(current_state)
-			self.choose_action(current_state)
-			break
 			while current_state != self.end_state:
 				action = self.choose_action(current_state)
-				#print(action)
+				action_dx = self.actions[action][0]
+				action_dy = self.actions[action][1]
+				next_state = (action_dx + current_state[0], action_dy + current_state[1])
+				#print("Current State" + str(current_state))
+				#print("action performed: " + str(action))
+				#print("Next State: " + str(next_state))
+				current_q_value = self.q_table[current_state[1]][current_state[0]]
+				maximum_action = self.choose_action(current_state,epsilon=0)
+				action_dx = self.actions[maximum_action][0]
+				action_dy = self.actions[maximum_action][1]
+				max_state = (action_dx + current_state[0], action_dy + current_state[1])
+				max_q_value = self.q_table[max_state[1], max_state[0]]
+				#TODO add a decaying learning rate
+				q_value = self.rewards(current_state) + gamma * ( max_q_value - current_q_value)
+				self.q_table[current_state[1]][current_state[0]] = q_value
+				current_state = next_state
+
 		print("This runs once")
 		#self.find_optimal_policy()
 
