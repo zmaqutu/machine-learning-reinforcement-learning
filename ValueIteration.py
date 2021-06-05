@@ -24,7 +24,7 @@ class ValueIteration:
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
 		self.start_state = (0,0)
-		self.end_state = (4,4)
+		self.end_state = (9,9)
 		self.rewards = {}
 		self.actions = {}
 		self.values = []
@@ -154,7 +154,7 @@ class ValueIteration:
 			self.values = temp_values.copy()
 			self.records.append(self.get_record())
 			print(self.records)
-			if iterations == 5:
+			if iterations == 20:
 				break
 			iterations += 1
 

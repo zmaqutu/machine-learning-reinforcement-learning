@@ -21,12 +21,13 @@ class QLearning:
 
 		self.gamma = float(sys.argv[12])
 		self.epochs = int(sys.argv[14])
+		self.learning_rate = 0.2
 
 		self.records = []
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
 		self.start_state = (0,0)
-		self.end_state = (4,4)
+		self.end_state = (9,9)
 		self.q_table = []
 		self.rewards = {}
 		self.actions = {}
@@ -144,10 +145,7 @@ class QLearning:
 	def get_record(self):
 		record = [[0 for x in range(self.width)] for y in range(self.height)]
 		for state in self.states:
-			if state == self.end_state:
-				continue
-			else:
-				record[state[1]][state[0]] = self.q_table[state[1]][state[0]]
+			record[state[1]][state[0]] = self.q_table[state[1]][state[0]]
 		return record
 
 
@@ -161,9 +159,9 @@ class QLearning:
 				action_dx = self.actions[action][0]
 				action_dy = self.actions[action][1]
 				next_state = (action_dx + current_state[0], action_dy + current_state[1])
-				print("Current State" + str(current_state))
-				print("action performed: " + str(action))
-				print("Next State: " + str(next_state))
+				#print("Current State" + str(current_state))
+				#print("action performed: " + str(action))
+				#print("Next State: " + str(next_state))
 				current_q_value = self.q_table[current_state[1]][current_state[0]]
 				maximum_action = self.choose_action(current_state,epsilon=0)
 				action_dx = self.actions[maximum_action][0]
@@ -171,11 +169,12 @@ class QLearning:
 				max_state = (action_dx + current_state[0], action_dy + current_state[1])
 				max_q_value = self.q_table[max_state[1]][max_state[0]]
 				#TODO add a decaying learning rate
-				q_value = self.rewards[next_state] + (self.gamma * ( max_q_value - current_q_value))
+				temporal_difference = (self.rewards[next_state] + (self.gamma * ( max_q_value - current_q_value)))
+				q_value = current_q_value + (self.learning_rate * temporal_difference)
 				self.q_table[current_state[1]][current_state[0]] = round(q_value,2)
 				print(self.q_table)
 				current_state = next_state
-				self.records.append(self.get_record())
+			self.records.append(self.get_record())
 
 		self.find_optimal_policy()
 		print(self.records)
