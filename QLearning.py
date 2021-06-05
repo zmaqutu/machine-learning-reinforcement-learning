@@ -74,12 +74,21 @@ class QLearning:
 			return False
 		return True
 
-	def choose_action(self, current_state, epsilon = 0.2):
+	def choose_action(self, current_state, epsilon = 0.9):
 		using_random_action = np.random.choice([True,False], p=[epsilon, 1 - epsilon])
+		actions = ["left","down","right","up"]
 		print(using_random_action)
 
 		if using_random_action:
-			print("We are using a random action")
+			print("We are using a random valid action")
+			while True:
+				random_index = random.randint(0,len(actions) - 1)
+				selected_action = actions[random_index]
+				action_change = self.actions[selected_action]
+				if self.is_valid_state((action_change[0] + current_state[0],action_change[1] + current_state[1])):
+					print("Start position is " + str(current_state))
+					print(selected_action)
+					return selected_action
 		else:
 			print("We are using a greedy action")
 			policy_candidates = {}
@@ -98,9 +107,10 @@ class QLearning:
 			random_index = random.randint(0, len(list_of_max) - 1)
 			max_state = list_of_max[random_index]
 			#Now we can use the max_state(state with the maximum q value to find the actioned perfomed to get there)
-			action_dx = max_state[0] - current_state[1]
+			action_dx = max_state[0] - current_state[0]
 			action_dy = max_state[1] - current_state[1]
 
+			print(str((action_dx,action_dy)) )
 			for action in self.actions:
 				if self.actions[action] == (action_dx,action_dy):
 					print(action)
@@ -158,12 +168,13 @@ class QLearning:
 		for iterations in range(self.epochs):
 
 			current_state = self.states[random.randint(0,len(self.states)-1)]
+			print("current statring state")
 			print(current_state)
 			self.choose_action(current_state)
 			break
-			while current_state != end_state:
-				action = choose_action(current_state)
-				print()
+			while current_state != self.end_state:
+				action = self.choose_action(current_state)
+				#print(action)
 		print("This runs once")
 		#self.find_optimal_policy()
 
