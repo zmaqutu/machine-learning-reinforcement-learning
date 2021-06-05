@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import random
 from Animate import generateAnimat
 
@@ -100,7 +101,7 @@ class QLearning:
 		actions = ["left","down","right","up"]
 
 		if taking_random_action:
-			print("We are using a random valid action")
+			#print("We are using a random valid action")
 			while True:
 				random_index = random.randint(0,len(actions) - 1)
 				selected_action = actions[random_index]
@@ -110,7 +111,7 @@ class QLearning:
 					#print(selected_action)
 					return selected_action
 		else:
-			print("We are using a greedy action")
+			#print("We are using a greedy action")
 			policy_candidates = {}
 			for action in self.actions:
 				next_state = (self.actions[action][0]+current_state[0],self.actions[action][1]+current_state[1])
@@ -160,7 +161,7 @@ class QLearning:
 
 		for state in policy_set:
 			self.opt_pol.append(state)
-		print(self.opt_pol)
+		print("Optimal Policy: " + str(self.opt_pol))
 
 	def get_record(self):
 		record = [[0 for x in range(self.width)] for y in range(self.height)]
@@ -201,7 +202,7 @@ class QLearning:
 				#TODO add a decaying learning rate
 				temporal_difference = (self.rewards[next_state] + (self.gamma * ( max_q_value - current_q_value)))
 				self.learning_rate = self.alpha / (1 + self.visits[current_state])
-				print(self.learning_rate)
+				#print(self.learning_rate)
 				q_value = current_q_value + (0.15* temporal_difference)
 				self.q_table[current_state[1]][current_state[0]] = round(q_value,2)
 				#print(self.q_table)
@@ -209,7 +210,7 @@ class QLearning:
 				#epsilon = epsilon * (1 - (1/(iterations+1)))
 				current_state = next_state
 			self.records.append(self.get_record())
-		print(self.visits)
+		#print(self.visits)
 
 		self.find_optimal_policy()
 		#print(self.records)

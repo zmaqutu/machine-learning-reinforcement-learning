@@ -1,6 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib
 import random
 from Animate import generateAnimat
 
@@ -52,7 +53,7 @@ class ValueIteration:
 
 	def animate(self):
 		anim, fig, ax = generateAnimat(self.records, self.start_state, self.end_state, mines=self.mines, opt_pol=self.opt_pol,
-									   start_val=-10, end_val=100, mine_val=150, just_vals=False, generate_gif=False,
+									   start_val=-10, end_val=100, mine_val=150, just_vals=False, generate_gif=True,
 									   vmin=-10, vmax=150)
 		plt.show()
 
