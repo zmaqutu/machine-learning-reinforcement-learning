@@ -20,7 +20,7 @@ class ValueIteration:
 
 		self.gamma = float(sys.argv[12])
 
-		self.records = set()
+		self.records = []
 		#self.start_state = (self.start_y, self.start_x)
 		#self.end_state = (self.end_y, self.end_x)
 		self.start_state = (0,0)
@@ -139,7 +139,7 @@ class ValueIteration:
 			self.values = temp_values.copy()
 			print(temp_values)
 			print("now adding to records")
-			self.records.append(self.values.copy())
+			self.records.append(temp_values.copy())
 			print("here is the record after appending")
 			print(self.records)
 			if iterations == 5:

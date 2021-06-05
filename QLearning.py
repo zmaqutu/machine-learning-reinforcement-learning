@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 import matplotlib.pyplot as plt
 import random
 from Animate import generateAnimat
@@ -19,7 +20,7 @@ class QLearning:
 		self.k = sys.argv[10]
 
 		self.gamma = float(sys.argv[12])
-		self.epochs = float(sys.argv[14])
+		self.epochs = int(sys.argv[14])
 
 		self.records = set()
 		#self.start_state = (self.start_y, self.start_x)
@@ -73,6 +74,11 @@ class QLearning:
 			return False
 		return True
 
+	def choose_action(self, current_state, epsilon = 0.5):
+		for i in range(10):
+			using_random_action = np.random.choice([True,False], p=[epsilon, 1 - epsilon])
+			print(using_random_action)
+
 	def calculate_value(self, state, next_state):
 		value = self.rewards[state] + (self.gamma * (self.values[next_state[1]][next_state[0]]) )
 		#print(str(state) +" has a rvalue of" + str(self.values[state[1]][state[0]]))
@@ -116,32 +122,18 @@ class QLearning:
 
 
 	def q_learn(self):
-		temp_values = self.values.copy()
+		#temp_values = self.values.copy()
 		for iterations in range(self.epochs):
-			current_state = self.states[random.randint(len(self.states))]
-			print(current_state)
-			return
-			for state in self.states:
-				adjacent_values = []
-				if state == self.end_state:
-					continue
-				for action in self.actions:
-					next_state = (self.actions[action][0]+state[0],self.actions[action][1]+state[1])
-					if self.is_valid_state(next_state):
-						#print(str(next_state) + " is a valid state")
-						value = self.calculate_value(state,next_state)
-						adjacent_values.append(value)
-					# calculate value at that state
-					else:
-						#print(str(next_state) + " is not a state")
-						continue
-				temp_values[state[1]][state[0]] = round(max(adjacent_values),2)
-			self.values = temp_values.copy()
-			print(temp_values)
-			self.records.append(self.values.copy())
 
+			current_state = self.states[random.randint(0,len(self.states)-1)]
+			print(current_state)
+			self.choose_action(current_state)
+			break
+			while current_state != end_state:
+				action = choose_action(current_state)
+				print()
 		print("This runs once")
-		self.find_optimal_policy()
+		#self.find_optimal_policy()
 
 
 
