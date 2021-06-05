@@ -74,10 +74,42 @@ class QLearning:
 			return False
 		return True
 
-	def choose_action(self, current_state, epsilon = 0.5):
-		for i in range(10):
-			using_random_action = np.random.choice([True,False], p=[epsilon, 1 - epsilon])
-			print(using_random_action)
+	def choose_action(self, current_state, epsilon = 0.2):
+		using_random_action = np.random.choice([True,False], p=[epsilon, 1 - epsilon])
+		print(using_random_action)
+
+		if using_random_action:
+			print("We are using a random action")
+		else:
+			print("We are using a greedy action")
+			policy_candidates = {}
+			for action in self.actions:
+				next_state = (self.actions[action][0]+current_state[0],self.actions[action][1]+current_state[1])
+				if is_valid_state(next_state):
+					policy_candidates[next_state] = self.q_table[next_state[1]][next_state[0]]
+
+			max_state = max(policy_candidates, key=policy_candidates.get)
+			max_q_value = policy_candidates[current_action]
+			list_of_max = []
+			for candidate in policy_candidates:
+				if policy_candidates[candidate] == max_q_value:
+					list_of_max.append(candidate)
+
+			random_index = random.randint(0, len(list_of_max) - 1)
+			max_state = list_of_max[random_index]
+			#Now we can use the max_state(state with the maximum q value to find the actioned perfomed to get there)
+			action_dx = max_state[0] - current_state[1]
+			action_dy = max_state[1] - current_state[1]
+
+			for action in self.actions:
+				if self.actions[action] == (action_dx,action_dy):
+					print(action)
+					return action
+
+
+			q_value = self.get_q_value()
+			adjasent_q_values.append(q_value)
+			max_q = round(max(adjacent_values),2)
 
 	def calculate_value(self, state, next_state):
 		value = self.rewards[state] + (self.gamma * (self.values[next_state[1]][next_state[0]]) )

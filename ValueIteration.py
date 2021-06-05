@@ -88,8 +88,7 @@ class ValueIteration:
 		i = 0
 		while True:
 			for action in self.actions:
-				next_state = (self.actions[action][0] + current_state[0],
-							  self.actions[action][1] + current_state[1])
+				next_state = (self.actions[action][0] + current_state[0],self.actions[action][1] + current_state[1])
 				if self.is_valid_state(next_state):
 					policy_candidates[next_state] = self.values[next_state[1]][next_state[0]]
 			#currently equals to the first key with maximum value
