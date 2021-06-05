@@ -21,9 +21,12 @@ help:
 
 # This generates the desired project file structure
 # A very important thing to note is that macros (or makefile variables) are referenced in the target's code with a single dollar sign ${}, but all script variables are referenced with two dollar signs $${}
-runKMeans:
+runSampleValueIteration:
 	. venv/bin/activate;
-	python3 kmeans.py
+	python3 ValueIteration.py 10 10 -start 1 1 -end 9 9 -k 3 -gamma 0.8 -epochs 100 -learningRate 0.1
+runSampleQLearning:
+	. venv/bin/activate
+	python3 QLearning.py 10 10 -start 1 1 -end 9 9 -k 2 -gamma 0.8 -epochs 100 -learningRate 0.1
 setup:
 	
 	@echo "Checking if project files are generated..."
