@@ -31,6 +31,7 @@ class QLearning:
 		self.q_table = []
 		self.rewards = {}
 		self.actions = {}
+		self.visits = {}
 		self.mines = []
 		self.states = []
 		self.opt_pol = []
@@ -48,6 +49,10 @@ class QLearning:
 				self.rewards[state] = 100
 			else:
 				self.rewards[state] = 0
+
+	def initialize_visits(self):
+		for state in self.states:
+			self.visits[state] = 0
 
 	def animate(self):
 		anim, fig, ax = generateAnimat(self.records, self.start_state, self.end_state, mines=self.mines, opt_pol=self.opt_pol,
@@ -75,8 +80,8 @@ class QLearning:
 			return False
 		return True
 
-	def choose_action(self, current_state, epsilon = 0.5):
-		using_random_action = np.random.choice([True,False], p=[epsilon, 1 - epsilon])
+	def choose_action(self, current_state, e_greedy = 0.8):
+		using_random_action = np.random.choice([True,False], p=[e_greedy, 1 - e_greedy])
 		actions = ["left","down","right","up"]
 
 		if using_random_action:
@@ -131,7 +136,7 @@ class QLearning:
 		policy_set = set()
 		policy_set.add(self.start_state)
 		while current_state != self.end_state:
-			max_action = self.choose_action(current_state,epsilon=0.1)
+			max_action = self.choose_action(current_state,e_greedy=0.2)
 			action_dx = self.actions[max_action][0]
 			action_dy = self.actions[max_action][1]
 			next_state = (action_dx + current_state[0],action_dy + current_state[1])
@@ -163,16 +168,18 @@ class QLearning:
 				#print("action performed: " + str(action))
 				#print("Next State: " + str(next_state))
 				current_q_value = self.q_table[current_state[1]][current_state[0]]
-				maximum_action = self.choose_action(current_state,epsilon=0)
+				maximum_action = self.choose_action(current_state,e_greedy=0)
 				action_dx = self.actions[maximum_action][0]
 				action_dy = self.actions[maximum_action][1]
 				max_state = (action_dx + current_state[0], action_dy + current_state[1])
 				max_q_value = self.q_table[max_state[1]][max_state[0]]
 				#TODO add a decaying learning rate
 				temporal_difference = (self.rewards[next_state] + (self.gamma * ( max_q_value - current_q_value)))
+				self.learning_rate = 1 / (1 + self.visits[current_state])
 				q_value = current_q_value + (self.learning_rate * temporal_difference)
 				self.q_table[current_state[1]][current_state[0]] = round(q_value,2)
 				print(self.q_table)
+				self.visits[current_state]+=1
 				current_state = next_state
 			self.records.append(self.get_record())
 
@@ -187,6 +194,7 @@ class QLearning:
 		self.initialize_states()
 		self.set_rewards()
 		print(self.q_table)
+		self.initialize_visits()
 		self.generate_actions()
 		self.q_learn()
 		self.animate()
