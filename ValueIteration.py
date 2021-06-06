@@ -53,7 +53,7 @@ class ValueIteration:
 
 	def animate(self):
 		anim, fig, ax = generateAnimat(self.records, self.start_state, self.end_state, mines=self.mines, opt_pol=self.opt_pol,
-									   start_val=-10, end_val=100, mine_val=150, just_vals=False, generate_gif=True,
+									   start_val=-10, end_val=100, mine_val=150, just_vals=False, generate_gif=False,
 									   vmin=-10, vmax=150)
 		plt.show()
 
@@ -158,6 +158,7 @@ class ValueIteration:
 		temp_values = self.values.copy()
 		iterations = 0
 		while True:
+			change = 0
 			for state in self.states:
 				adjacent_values = []
 				if state == self.end_state or state in self.mines:

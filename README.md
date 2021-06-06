@@ -12,13 +12,16 @@
 * [Libraries Used](#libraries)
 * [Future Scope](#FutureScope)
 ## Description 
-*This is an implementation of two well know reinforcement learinging algorighms: Value Iteration and Q-Learning. The numpy library is also used to 
-generate random choices with given probabilites.*
+*This is an implementation of two fundamental reinforcement learinging algorighms: Value Iteration and Q-Learning. The numpy library is also used to 
+generate random choices with given probabilites simulating explorative and exploitative behaviour.*
 
 ## Value Iteration Demo
+Here our agent is fully aware of its surroundings, acting in a fully observable Markov Decision Process (MDP) 
 <img src="./output/value_iteration.gif" width="100%">
 
 ## Q-Learning Demo
+Here our agent knows very little about its surroundings. In this algorithm the agent explores the gird world in a series of both random actions (explorative behaviour) and greedy actions (exploitative behaviour) until some path can be found.
+The agent acts in a partially observable Markov Decision Process
 <img src="./output/q_learning.gif" width="100%">
   
 
